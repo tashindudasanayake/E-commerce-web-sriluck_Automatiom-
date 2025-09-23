@@ -1,10 +1,30 @@
 // src/components/Navbar.jsx
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { ShoppingCartIcon, UserIcon, MagnifyingGlassIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import React, { useState, useEffect, useRef } from 'react';
+import { NavLink, Link } from 'react-router-dom';
+import { ShoppingCartIcon, UserIcon, MagnifyingGlassIcon, Bars3Icon, XMarkIcon, ArrowRightOnRectangleIcon, UserPlusIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  
+  // Mock user state - in real app, this would come from your auth context/state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Style for active NavLink
   const activeLinkStyle = {
@@ -12,13 +32,29 @@ const Navbar = () => {
     textDecoration: 'underline',
   };
 
+  const handleLogin = () => {
+    // This will now be handled by the Link component to navigate to /login
+    console.log('Navigating to login page...');
+  };
+
+  const handleRegister = () => {
+    // This will now be handled by the Link component to navigate to /register
+    console.log('Navigating to register page...');
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUser(null);
+    setIsUserDropdownOpen(false);
+  };
+
   return (
     <nav className="bg-gray-800 text-white shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo / Brand Name */}
-          <NavLink to="/" className="text-2xl font-bold text-white">
-            Electro<span className="text-blue-500">Shop</span>
+          <NavLink to="/" className="text-3xl font-bold text-white">
+            Click<span className="text-blue-500">Store.LK</span>
           </NavLink>
 
           {/* Primary Navigation (Desktop) */}
@@ -39,13 +75,84 @@ const Navbar = () => {
               />
               <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2" />
             </div>
-            <button className="relative p-2 hover:bg-gray-700 rounded-full">
+            
+            {/* Shopping Cart */}
+            <button className="relative p-2 hover:bg-gray-700 rounded-full transition-colors">
               <ShoppingCartIcon className="h-6 w-6" />
               <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">3</span>
             </button>
-            <button className="p-2 hover:bg-gray-700 rounded-full">
-              <UserIcon className="h-6 w-6" />
-            </button>
+
+            {/* Admin Panel Link */}
+            <NavLink 
+              to="/admin/login" 
+              className="hidden lg:block px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 rounded-md transition-colors"
+            >
+              Admin
+            </NavLink>
+            
+            {/* User Authentication Section */}
+            <div className="relative" ref={dropdownRef}>
+              {isLoggedIn ? (
+                /* Logged In User Dropdown */
+                <div className="relative">
+                  <button 
+                    onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-700 rounded-full transition-colors"
+                  >
+                    <UserIcon className="h-6 w-6" />
+                    <span className="hidden lg:block text-sm">{user?.name || 'User'}</span>
+                  </button>
+                  
+                  {/* User Dropdown Menu */}
+                  {isUserDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                      <div className="px-4 py-2 text-sm text-gray-700 border-b">
+                        <p className="font-medium">{user?.name}</p>
+                        <p className="text-gray-500">{user?.email}</p>
+                      </div>
+                      <a href="#" className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2">
+                        <UserIcon className="h-4 w-4" />
+                        <span>Profile</span>
+                      </a>
+                      <a href="#" className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2">
+                        <Cog6ToothIcon className="h-4 w-4" />
+                        <span>Settings</span>
+                      </a>
+                      <a href="#" className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2">
+                        <ShoppingCartIcon className="h-4 w-4" />
+                        <span>Orders</span>
+                      </a>
+                      <hr className="my-1" />
+                      <button 
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                      >
+                        <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* Login/Register Buttons */
+                <div className="flex items-center space-x-2">
+                  <Link 
+                    to="/login"
+                    className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-white border border-blue-500 rounded-lg hover:bg-blue-500 transition-colors"
+                  >
+                    <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                    <span>Login</span>
+                  </Link>
+                  <Link 
+                    to="/register"
+                    className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <UserPlusIcon className="h-4 w-4" />
+                    <span>Sign Up</span>
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -65,7 +172,52 @@ const Navbar = () => {
             <NavLink to="/products" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Products</NavLink>
             <NavLink to="/about" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>About Us</NavLink>
             <NavLink to="/contact" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Contact</NavLink>
-            {/* You can add cart/user icons for mobile here as well if needed */}
+            
+            {/* Mobile User Authentication */}
+            <div className="border-t border-gray-700 pt-4 mt-4 w-full flex flex-col items-center space-y-2">
+              {isLoggedIn ? (
+                <div className="flex flex-col items-center space-y-2">
+                  <div className="text-center">
+                    <p className="text-white font-medium">{user?.name}</p>
+                    <p className="text-gray-400 text-sm">{user?.email}</p>
+                  </div>
+                  <button className="flex items-center space-x-2 px-3 py-2 text-sm text-white hover:bg-gray-700 rounded-md">
+                    <UserIcon className="h-4 w-4" />
+                    <span>Profile</span>
+                  </button>
+                  <button className="flex items-center space-x-2 px-3 py-2 text-sm text-white hover:bg-gray-700 rounded-md">
+                    <ShoppingCartIcon className="h-4 w-4" />
+                    <span>Orders</span>
+                  </button>
+                  <button 
+                    onClick={handleLogout}
+                    className="flex items-center space-x-2 px-3 py-2 text-sm text-red-400 hover:bg-gray-700 rounded-md"
+                  >
+                    <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col space-y-2 w-full max-w-xs">
+                  <Link 
+                    to="/login"
+                    className="flex items-center justify-center space-x-2 w-full px-4 py-2 text-sm font-medium text-white border border-blue-500 rounded-lg hover:bg-blue-500 transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                    <span>Login</span>
+                  </Link>
+                  <Link 
+                    to="/register"
+                    className="flex items-center justify-center space-x-2 w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <UserPlusIcon className="h-4 w-4" />
+                    <span>Sign Up</span>
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
