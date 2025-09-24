@@ -10,8 +10,7 @@ const HomePage = () => {
       {/* Hero Section */}
       <Hero />
       
-      {/* About Section */}
-      <AboutSection />
+
       
       {/* Future: Featured Products Section */}
       {/* This section can be added later for showcasing featured/popular products */}
@@ -40,6 +39,9 @@ const HomePage = () => {
       
       {/* Contact Section */}
       <ContactSection />
+
+      {/* About Section */}
+      <AboutSection />
     </div>
   );
 };
