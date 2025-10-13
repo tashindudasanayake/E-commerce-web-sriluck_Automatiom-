@@ -1,16 +1,24 @@
 // src/components/Navbar.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import { ShoppingCartIcon, UserIcon, MagnifyingGlassIcon, Bars3Icon, XMarkIcon, ArrowRightOnRectangleIcon, UserPlusIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../context/AuthContext';
+import { scrollToSection } from '../utils/scrollUtils';
+import { useActiveSection } from '../hooks/useActiveSection';
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   
-  // Mock user state - in real app, this would come from your auth context/state
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
+  // Get user state from auth context
+  const { user, isLoggedIn, logout } = useAuth();
+  
+  // Get current location and navigation
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isHomePage = location.pathname === '/';
+  const activeSection = useActiveSection();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -32,20 +40,24 @@ const Navbar = () => {
     textDecoration: 'underline',
   };
 
-  const handleLogin = () => {
-    // This will now be handled by the Link component to navigate to /login
-    console.log('Navigating to login page...');
-  };
-
-  const handleRegister = () => {
-    // This will now be handled by the Link component to navigate to /register
-    console.log('Navigating to register page...');
-  };
-
   const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUser(null);
+    logout();
     setIsUserDropdownOpen(false);
+  };
+
+  // Handle navigation - scroll to section if on home page, otherwise navigate
+  const handleNavigation = (sectionId, fallbackPath) => {
+    if (isHomePage) {
+      scrollToSection(sectionId);
+      setIsMobileMenuOpen(false);
+    } else {
+      navigate('/');
+      // Wait for navigation to complete, then scroll
+      setTimeout(() => {
+        scrollToSection(sectionId);
+      }, 100);
+      setIsMobileMenuOpen(false);
+    }
   };
 
   return (
@@ -59,10 +71,31 @@ const Navbar = () => {
 
           {/* Primary Navigation (Desktop) */}
           <div className="hidden md:flex items-center space-x-6">
-            <NavLink to="/" className="hover:text-blue-400 transition" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Home</NavLink>
+            <button 
+              onClick={() => handleNavigation('home')}
+              className={`hover:text-blue-400 transition ${
+                isHomePage && activeSection === 'home' ? 'text-blue-400 underline' : ''
+              }`}
+            >
+              Home
+            </button>
             <NavLink to="/products" className="hover:text-blue-400 transition" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Products</NavLink>
-            <NavLink to="/about" className="hover:text-blue-400 transition" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>About Us</NavLink>
-            <NavLink to="/contact" className="hover:text-blue-400 transition" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Contact</NavLink>
+            <button 
+              onClick={() => handleNavigation('about')}
+              className={`hover:text-blue-400 transition ${
+                isHomePage && activeSection === 'about' ? 'text-blue-400 underline' : ''
+              }`}
+            >
+              About Us
+            </button>
+            <button 
+              onClick={() => handleNavigation('contact')}
+              className={`hover:text-blue-400 transition ${
+                isHomePage && activeSection === 'contact' ? 'text-blue-400 underline' : ''
+              }`}
+            >
+              Contact
+            </button>
           </div>
 
           {/* Search, Cart, and User Icons (Desktop) */}
@@ -100,14 +133,14 @@ const Navbar = () => {
                     className="flex items-center space-x-2 p-2 hover:bg-gray-700 rounded-full transition-colors"
                   >
                     <UserIcon className="h-6 w-6" />
-                    <span className="hidden lg:block text-sm">{user?.name || 'User'}</span>
+                    <span className="hidden lg:block text-sm">{user?.fullName || user?.name || 'User'}</span>
                   </button>
                   
                   {/* User Dropdown Menu */}
                   {isUserDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                       <div className="px-4 py-2 text-sm text-gray-700 border-b">
-                        <p className="font-medium">{user?.name}</p>
+                        <p className="font-medium">{user?.fullName || user?.name || 'User'}</p>
                         <p className="text-gray-500">{user?.email}</p>
                       </div>
                       <a href="#" className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2">
@@ -168,17 +201,45 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-gray-800">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col items-center">
-            <NavLink to="/" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Home</NavLink>
-            <NavLink to="/products" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Products</NavLink>
-            <NavLink to="/about" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>About Us</NavLink>
-            <NavLink to="/contact" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Contact</NavLink>
+            <button 
+              onClick={() => handleNavigation('home')}
+              className={`block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 ${
+                isHomePage && activeSection === 'home' ? 'text-blue-400 bg-gray-700' : ''
+              }`}
+            >
+              Home
+            </button>
+            <NavLink 
+              to="/products" 
+              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700" 
+              style={({ isActive }) => isActive ? activeLinkStyle : undefined}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Products
+            </NavLink>
+            <button 
+              onClick={() => handleNavigation('about')}
+              className={`block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 ${
+                isHomePage && activeSection === 'about' ? 'text-blue-400 bg-gray-700' : ''
+              }`}
+            >
+              About Us
+            </button>
+            <button 
+              onClick={() => handleNavigation('contact')}
+              className={`block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 ${
+                isHomePage && activeSection === 'contact' ? 'text-blue-400 bg-gray-700' : ''
+              }`}
+            >
+              Contact
+            </button>
             
             {/* Mobile User Authentication */}
             <div className="border-t border-gray-700 pt-4 mt-4 w-full flex flex-col items-center space-y-2">
               {isLoggedIn ? (
                 <div className="flex flex-col items-center space-y-2">
                   <div className="text-center">
-                    <p className="text-white font-medium">{user?.name}</p>
+                    <p className="text-white font-medium">{user?.fullName || user?.name || 'User'}</p>
                     <p className="text-gray-400 text-sm">{user?.email}</p>
                   </div>
                   <button className="flex items-center space-x-2 px-3 py-2 text-sm text-white hover:bg-gray-700 rounded-md">

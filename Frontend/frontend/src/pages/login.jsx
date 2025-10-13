@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -7,7 +8,9 @@ export default function Login() {
     password: ''
   });
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     setFormData({
@@ -19,32 +22,21 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setMessage('');
     
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-      
-      if (res.ok) {
-        // Store token and user info in localStorage
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        
-        alert("Login successful!");
-        navigate('/'); // Redirect to home page after successful login
-      } else {
-        alert(data.message || "Login failed");
-      }
-    } catch (err) {
-      console.error("Login error:", err);
-      alert("Network error. Please check if your server is running.");
-    } finally {
-      setLoading(false);
+    const result = await login(formData.email, formData.password);
+    
+    if (result.success) {
+      setMessage(result.message);
+      // Small delay to show success message before redirecting
+      setTimeout(() => {
+        navigate('/');
+      }, 1000);
+    } else {
+      setMessage(result.message);
     }
+    
+    setLoading(false);
   };
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -63,6 +55,18 @@ export default function Login() {
         </div>
         
         <h2 className="text-3xl font-bold mb-6 text-center">Login</h2>
+        
+        {/* Message Display */}
+        {message && (
+          <div className={`mb-4 p-3 rounded-lg text-center ${
+            message.includes('successful') 
+              ? 'bg-green-100 text-green-700 border border-green-300' 
+              : 'bg-red-100 text-red-700 border border-red-300'
+          }`}>
+            {message}
+          </div>
+        )}
+        
         <form onSubmit={handleLogin}>
           <input
             type="email"

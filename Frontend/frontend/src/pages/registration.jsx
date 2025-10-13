@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -8,6 +9,9 @@ export default function Register() {
     password: ''
   });
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
+  const { register } = useAuth();
 
   const handleChange = (e) => {
     setFormData({
@@ -19,27 +23,22 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setMessage('');
     
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/registration", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        alert("Registration successful!");
-        setFormData({ fullName: '', email: '', password: '' }); // Reset form
-      } else {
-        alert(data.message || "Registration failed");
-      }
-    } catch (err) {
-      console.error("Registration error:", err);
-      alert("Network error. Please check if your server is running.");
-    } finally {
-      setLoading(false);
+    const result = await register(formData.fullName, formData.email, formData.password);
+    
+    if (result.success) {
+      setMessage(result.message);
+      setFormData({ fullName: '', email: '', password: '' }); // Reset form
+      // Redirect to login page after successful registration
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+    } else {
+      setMessage(result.message);
     }
+    
+    setLoading(false);
   };
 
   return (
@@ -59,6 +58,18 @@ export default function Register() {
         </div>
         
         <h2 className="text-3xl font-bold mb-6 text-center">Register</h2>
+        
+        {/* Message Display */}
+        {message && (
+          <div className={`mb-4 p-3 rounded-lg text-center ${
+            message.includes('successful') 
+              ? 'bg-green-100 text-green-700 border border-green-300' 
+              : 'bg-red-100 text-red-700 border border-red-300'
+          }`}>
+            {message}
+          </div>
+        )}
+        
         <form onSubmit={handleRegister}>
           <input
             type="text"
@@ -105,27 +116,4 @@ export default function Register() {
     </div>
   );
 }
-
-
-
-//when the user submits, send data to backend:
-const handleRegister = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await fetch("http://localhost:5000/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fullName, email, password }),
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      alert("Registration successful!");
-    } else {
-      alert(data.message);
-    }
-  } catch (err) {
-    console.error(err);
-  }
-};
 

@@ -1,13 +1,16 @@
 // src/pages/admin/Dashboard.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ShoppingBagIcon,
   UserGroupIcon,
   CurrencyDollarIcon,
   ClipboardDocumentListIcon
 } from '@heroicons/react/24/outline';
+import AddProduct from '../../components/AddProduct';
 
 const Dashboard = () => {
+  const [showAddProduct, setShowAddProduct] = useState(false);
+
   // Simple stats
   const stats = [
     { name: 'Products', value: '124', icon: ShoppingBagIcon, color: 'bg-blue-500' },
@@ -15,6 +18,11 @@ const Dashboard = () => {
     { name: 'Orders', value: '89', icon: ClipboardDocumentListIcon, color: 'bg-purple-500' },
     { name: 'Revenue', value: '$12,345', icon: CurrencyDollarIcon, color: 'bg-yellow-500' }
   ];
+
+  const handleProductAdded = (newProduct) => {
+    setShowAddProduct(false);
+    // You can add additional logic here, like refreshing stats
+  };
 
   return (
     <div className="space-y-6">
@@ -48,8 +56,11 @@ const Dashboard = () => {
       <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
-            Add New Product
+          <button 
+            onClick={() => setShowAddProduct(!showAddProduct)}
+            className="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            {showAddProduct ? 'Hide Add Product' : 'Add New Product'}
           </button>
           <button className="bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors">
             View All Orders
@@ -59,6 +70,11 @@ const Dashboard = () => {
           </button>
         </div>
       </div>
+
+      {/* Add Product Form */}
+      {showAddProduct && (
+        <AddProduct onProductAdded={handleProductAdded} />
+      )}
 
       {/* Recent activity */}
       <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
