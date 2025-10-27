@@ -20,6 +20,7 @@ import Register from './pages/registration';
 import AdminLayout from './components/admin/AdminLayout';
 import ProtectedRoute from './components/admin/ProtectedRoute';
 import AdminLogin from './pages/admin/AdminLogin';
+import AdminRegister from './pages/admin/AdminRegister';
 import Dashboard from './pages/admin/Dashboard';
 import Products from './pages/admin/Products';
 import Users from './pages/admin/Users';
@@ -63,8 +64,9 @@ function AppContent() {
             </>
           } />
           
-          {/* Admin login route (no layout) */}
+          {/* Admin authentication routes (no layout) */}
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/register" element={<AdminRegister />} />
           
           {/* Admin routes with admin layout */}
           <Route path="/admin/*" element={
