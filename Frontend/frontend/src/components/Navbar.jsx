@@ -34,11 +34,7 @@ const Navbar = () => {
     };
   }, []);
 
-  // Style for active NavLink
-  const activeLinkStyle = {
-    color: '#3b82f6', // A nice blue color for active links
-    textDecoration: 'underline',
-  };
+
 
   const handleLogout = () => {
     logout();
@@ -79,7 +75,14 @@ const Navbar = () => {
             >
               Home
             </button>
-            <NavLink to="/products" className="hover:text-blue-400 transition" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Products</NavLink>
+            <button 
+              onClick={() => handleNavigation('products')}
+              className={`hover:text-blue-400 transition ${
+                isHomePage && activeSection === 'products' ? 'text-blue-400 underline' : ''
+              }`}
+            >
+              Products
+            </button>
             <button 
               onClick={() => handleNavigation('about')}
               className={`hover:text-blue-400 transition ${
@@ -209,14 +212,14 @@ const Navbar = () => {
             >
               Home
             </button>
-            <NavLink 
-              to="/products" 
-              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700" 
-              style={({ isActive }) => isActive ? activeLinkStyle : undefined}
-              onClick={() => setIsMobileMenuOpen(false)}
+            <button 
+              onClick={() => handleNavigation('products')}
+              className={`block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 ${
+                isHomePage && activeSection === 'products' ? 'text-blue-400 bg-gray-700' : ''
+              }`}
             >
               Products
-            </NavLink>
+            </button>
             <button 
               onClick={() => handleNavigation('about')}
               className={`block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 ${
