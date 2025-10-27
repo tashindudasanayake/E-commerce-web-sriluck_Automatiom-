@@ -121,9 +121,9 @@ const Navbar = () => {
             {/* Admin Panel Link */}
             <NavLink 
               to="/admin/login" 
-              className="hidden lg:block px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 rounded-md transition-colors"
+              className="hidden lg:block px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
             >
-              Admin
+              🔐 Admin
             </NavLink>
             
             {/* User Authentication Section */}
@@ -236,6 +236,15 @@ const Navbar = () => {
             >
               Contact
             </button>
+            
+            {/* Admin Link - Mobile */}
+            <Link
+              to="/admin/login"
+              className="block px-4 py-3 text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all duration-200 shadow-md text-center"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              🔐 Admin Portal
+            </Link>
             
             {/* Mobile User Authentication */}
             <div className="border-t border-gray-700 pt-4 mt-4 w-full flex flex-col items-center space-y-2">
