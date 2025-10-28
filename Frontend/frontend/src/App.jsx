@@ -46,24 +46,6 @@ function AppContent() {
     <Router>
       <div className="flex flex-col min-h-screen bg-gray-50">
         <Routes>
-          {/* Public routes with navbar and footer */}
-          <Route path="/*" element={
-            <>
-              <Navbar />
-              <main className="flex-grow">
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/products" element={<ProductsPage />} />
-                  <Route path="/about" element={<AboutPage />} />
-                  <Route path="/contact" element={<ContactPage />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                </Routes>
-              </main>
-              <Footer />
-            </>
-          } />
-          
           {/* Admin authentication routes (no layout) */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/register" element={<AdminRegister />} />
@@ -81,6 +63,24 @@ function AppContent() {
                 </Routes>
               </AdminLayout>
             </ProtectedRoute>
+          } />
+          
+          {/* Public routes with navbar and footer */}
+          <Route path="/*" element={
+            <>
+              <Navbar />
+              <main className="flex-grow">
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/products" element={<ProductsPage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                </Routes>
+              </main>
+              <Footer />
+            </>
           } />
         </Routes>
       </div>
