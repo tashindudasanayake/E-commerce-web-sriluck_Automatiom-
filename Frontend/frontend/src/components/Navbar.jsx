@@ -119,22 +119,15 @@ const Navbar = () => {
             </button>
 
             {/* Admin Panel Link */}
-            <button 
-              onClick={() => {
-                console.log('Admin button clicked! Navigating to admin login...');
-                try {
-                  // Try React Router navigation first
-                  navigate('/admin/login');
-                } catch (error) {
-                  console.log('Navigate failed, using window.location:', error);
-                  // Fallback to window.location
-                  window.location.href = '/admin/login';
-                }
+            <a 
+              href="/admin/login"
+              className="hidden lg:block px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 no-underline"
+              onClick={(e) => {
+                console.log('Admin link clicked!');
               }}
-              className="hidden lg:block px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
             >
               🔐 Admin
-            </button>
+            </a>
             
             {/* User Authentication Section */}
             <div className="relative" ref={dropdownRef}>
@@ -248,23 +241,16 @@ const Navbar = () => {
             </button>
             
             {/* Admin Link - Mobile */}
-            <button
+            <a
+              href="/admin/login"
+              className="block px-4 py-3 text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all duration-200 shadow-md text-center w-full no-underline"
               onClick={() => {
-                console.log('Mobile admin button clicked! Navigating to admin login...');
+                console.log('Mobile admin link clicked!');
                 setIsMobileMenuOpen(false);
-                try {
-                  // Try React Router navigation first
-                  navigate('/admin/login');
-                } catch (error) {
-                  console.log('Navigate failed, using window.location:', error);
-                  // Fallback to window.location
-                  window.location.href = '/admin/login';
-                }
               }}
-              className="block px-4 py-3 text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all duration-200 shadow-md text-center w-full"
             >
               🔐 Admin Portal
-            </button>
+            </a>
             
             {/* Mobile User Authentication */}
             <div className="border-t border-gray-700 pt-4 mt-4 w-full flex flex-col items-center space-y-2">
