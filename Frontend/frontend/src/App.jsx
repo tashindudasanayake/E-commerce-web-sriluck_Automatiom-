@@ -51,12 +51,11 @@ function AppContent() {
           <Route path="/admin/register" element={<AdminRegister />} />
           
           {/* Admin routes with admin layout */}
-          <Route path="/admin/*" element={
+          <Route path="/admin/dashboard/*" element={
             <ProtectedRoute>
               <AdminLayout>
                 <Routes>
                   <Route path="/" element={<Dashboard />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/products" element={<Products />} />
                   <Route path="/users" element={<Users />} />
                   <Route path="/orders" element={<Orders />} />
@@ -66,18 +65,56 @@ function AppContent() {
           } />
           
           {/* Public routes with navbar and footer */}
-          <Route path="/*" element={
+          <Route path="/" element={
             <>
               <Navbar />
               <main className="flex-grow">
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/products" element={<ProductsPage />} />
-                  <Route path="/about" element={<AboutPage />} />
-                  <Route path="/contact" element={<ContactPage />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                </Routes>
+                <HomePage />
+              </main>
+              <Footer />
+            </>
+          } />
+          <Route path="/products" element={
+            <>
+              <Navbar />
+              <main className="flex-grow">
+                <ProductsPage />
+              </main>
+              <Footer />
+            </>
+          } />
+          <Route path="/about" element={
+            <>
+              <Navbar />
+              <main className="flex-grow">
+                <AboutPage />
+              </main>
+              <Footer />
+            </>
+          } />
+          <Route path="/contact" element={
+            <>
+              <Navbar />
+              <main className="flex-grow">
+                <ContactPage />
+              </main>
+              <Footer />
+            </>
+          } />
+          <Route path="/login" element={
+            <>
+              <Navbar />
+              <main className="flex-grow">
+                <Login />
+              </main>
+              <Footer />
+            </>
+          } />
+          <Route path="/register" element={
+            <>
+              <Navbar />
+              <main className="flex-grow">
+                <Register />
               </main>
               <Footer />
             </>
