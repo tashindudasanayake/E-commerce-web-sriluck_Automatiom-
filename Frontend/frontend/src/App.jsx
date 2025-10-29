@@ -11,8 +11,6 @@ import Footer from './components/Footer';
 import Loading from './components/Loading';
 import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
-import AboutPage from './pages/AboutPage';
-import ContactPage from './pages/ContactPage';
 import Login from './pages/login';
 import Register from './pages/registration';
 
@@ -48,16 +46,35 @@ function AppContent() {
           {/* Admin authentication routes (no layout) */}
           <Route path="/admin/login" element={<AdminLogin />} />
           
-          {/* Admin routes with admin layout */}
-          <Route path="/admin/dashboard/*" element={
+          {/* Admin routes with admin layout and protection */}
+          <Route path="/admin/dashboard" element={
             <ProtectedRoute>
               <AdminLayout>
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/users" element={<Users />} />
-                  <Route path="/orders" element={<Orders />} />
-                </Routes>
+                <Dashboard />
+              </AdminLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/admin/products" element={
+            <ProtectedRoute>
+              <AdminLayout>
+                <Products />
+              </AdminLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/admin/users" element={
+            <ProtectedRoute>
+              <AdminLayout>
+                <Users />
+              </AdminLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/admin/orders" element={
+            <ProtectedRoute>
+              <AdminLayout>
+                <Orders />
               </AdminLayout>
             </ProtectedRoute>
           } />
@@ -77,24 +94,6 @@ function AppContent() {
               <Navbar />
               <main className="flex-grow">
                 <ProductsPage />
-              </main>
-              <Footer />
-            </>
-          } />
-          <Route path="/about" element={
-            <>
-              <Navbar />
-              <main className="flex-grow">
-                <AboutPage />
-              </main>
-              <Footer />
-            </>
-          } />
-          <Route path="/contact" element={
-            <>
-              <Navbar />
-              <main className="flex-grow">
-                <ContactPage />
               </main>
               <Footer />
             </>

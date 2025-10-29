@@ -3,10 +3,31 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
-  // Check if user is authenticated (in a real app, this would be more sophisticated)
-  const isAuthenticated = localStorage.getItem('adminAuth') === 'true';
+  // Check if admin is authenticated by checking for token and admin data
+  const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+  const adminAuthData = localStorage.getItem('adminAuth') || sessionStorage.getItem('adminAuth');
+  
+  // Verify token exists and user has admin role
+  const isAuthenticated = () => {
+    if (!adminToken && !adminAuthData) {
+      return false;
+    }
 
-  if (!isAuthenticated) {
+    try {
+      // Parse admin data if it exists
+      if (adminAuthData) {
+        const authData = JSON.parse(adminAuthData);
+        return authData.user && authData.user.role === 'admin';
+      }
+      return !!adminToken;
+    } catch (error) {
+      console.error('Error parsing admin data:', error);
+      return false;
+    }
+  };
+
+  if (!isAuthenticated()) {
+    // Redirect to admin login if not authenticated
     return <Navigate to="/admin/login" replace />;
   }
 
