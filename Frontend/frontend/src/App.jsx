@@ -48,7 +48,6 @@ function AppContent() {
         <Routes>
           {/* Admin authentication routes (no layout) */}
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/register" element={<AdminRegister />} />
           
           {/* Admin routes with admin layout */}
           <Route path="/admin/dashboard/*" element={

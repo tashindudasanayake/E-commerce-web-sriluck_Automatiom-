@@ -4,7 +4,11 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import verifyToken from "../middleware/auth.js";
 
+const express = require("express");
 const router = express.Router();
+const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 // Register
 router.post("/registration", async (req, res) => {
