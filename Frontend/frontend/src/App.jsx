@@ -20,7 +20,6 @@ import Register from './pages/registration';
 import AdminLayout from './components/admin/AdminLayout';
 import ProtectedRoute from './components/admin/ProtectedRoute';
 import AdminLogin from './pages/admin/AdminLogin';
-import AdminRegister from './pages/admin/AdminRegister';
 import Dashboard from './pages/admin/Dashboard';
 import Products from './pages/admin/Products';
 import Users from './pages/admin/Users';
