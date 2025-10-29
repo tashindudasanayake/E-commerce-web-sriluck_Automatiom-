@@ -55,38 +55,45 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Demo admin credentials check
-      if (formData.email === 'admin@clickstore.lk' && formData.password === 'Admin@123') {
+      // Call backend API for admin login
+      const response = await fetch('http://localhost:5000/api/auth/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
         // Store auth info
         const authData = {
-          token: 'demo_admin_token_' + Date.now(),
-          user: {
-            id: 1,
-            name: 'Admin User',
-            email: formData.email,
-            role: 'admin'
-          },
+          token: data.token,
+          user: data.user,
           timestamp: new Date().toISOString()
         };
         
         if (rememberMe) {
           localStorage.setItem('adminAuth', JSON.stringify(authData));
+          localStorage.setItem('adminToken', data.token);
         } else {
           sessionStorage.setItem('adminAuth', JSON.stringify(authData));
+          sessionStorage.setItem('adminToken', data.token);
         }
         
-        // Success message and redirect
-        setIsLoading(false);
+        // Success - redirect to dashboard
         navigate('/admin/dashboard');
       } else {
-        setError('Invalid credentials. Please check your email and password.');
-        setIsLoading(false);
+        setError(data.message || 'Invalid credentials. Please check your email and password.');
       }
     } catch (error) {
-      setError('Login failed. Please try again.');
+      console.error('Login error:', error);
+      setError('Connection error. Please check if the backend server is running.');
+    } finally {
       setIsLoading(false);
     }
   };
@@ -106,15 +113,14 @@ const AdminLogin = () => {
             <h2 className="text-lg font-semibold text-gray-700">Admin Login</h2>
           </div>
 
-          {/* Demo Credentials Notice */}
+          {/* Admin Credentials Notice */}
           <div className="mb-6 p-3 bg-blue-50 rounded-lg border border-blue-200">
             <div className="flex items-start space-x-2">
               <ExclamationCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium text-blue-900 mb-1">Demo Credentials</p>
+                <p className="text-sm font-medium text-blue-900 mb-1">Admin Access</p>
                 <p className="text-xs text-blue-700">
-                  Email: <span className="font-semibold">admin@clickstore.lk</span><br />
-                  Password: <span className="font-semibold">Admin@123</span>
+                  Contact system administrator for login credentials
                 </p>
               </div>
             </div>
@@ -229,13 +235,7 @@ const AdminLogin = () => {
 
             {/* Additional Options */}
             <div className="mt-6 pt-5 border-t border-gray-200">
-              <div className="flex items-center justify-between text-sm">
-                <Link
-                  to="/admin/register"
-                  className="text-blue-600 hover:text-blue-500 font-medium"
-                >
-                  Create Account
-                </Link>
+              <div className="flex justify-center text-sm">
                 <Link
                   to="/"
                   className="text-gray-600 hover:text-gray-900 flex items-center"
