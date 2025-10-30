@@ -23,6 +23,19 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
+      // Check for admin authentication first
+      const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+      const savedAdminUser = localStorage.getItem('adminAuth') || sessionStorage.getItem('adminAuth');
+      
+      if (adminToken && savedAdminUser) {
+        const adminUser = JSON.parse(savedAdminUser);
+        setUser(adminUser);
+        setIsLoggedIn(true);
+        setLoading(false);
+        return;
+      }
+
+      // Check for regular user authentication
       const token = localStorage.getItem('token');
       const savedUser = localStorage.getItem('user');
       
@@ -55,7 +68,8 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      // First, try admin login
+      const adminResponse = await fetch('http://localhost:5000/api/auth/admin/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -63,19 +77,53 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ email, password })
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        // Store token and user info
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+      if (adminResponse.ok) {
+        const adminData = await adminResponse.json();
         
-        setUser(data.user);
+        // Store admin credentials with special keys
+        localStorage.setItem('adminToken', adminData.token);
+        localStorage.setItem('adminAuth', JSON.stringify(adminData.user));
+        sessionStorage.setItem('adminToken', adminData.token);
+        sessionStorage.setItem('adminAuth', JSON.stringify(adminData.user));
+        
+        setUser(adminData.user);
         setIsLoggedIn(true);
         
-        return { success: true, message: 'Login successful!' };
+        return { 
+          success: true, 
+          message: 'Admin login successful!', 
+          isAdmin: true,
+          redirectTo: '/admin/dashboard'
+        };
+      }
+
+      // If admin login fails, try regular user login
+      const userResponse = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const userData = await userResponse.json();
+
+      if (userResponse.ok) {
+        // Store regular user credentials
+        localStorage.setItem('token', userData.token);
+        localStorage.setItem('user', JSON.stringify(userData.user));
+        
+        setUser(userData.user);
+        setIsLoggedIn(true);
+        
+        return { 
+          success: true, 
+          message: 'Login successful!', 
+          isAdmin: false,
+          redirectTo: '/'
+        };
       } else {
-        return { success: false, message: data.message || 'Login failed' };
+        return { success: false, message: userData.message || 'Invalid credentials' };
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -107,8 +155,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    // Clear both admin and regular user credentials
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminAuth');
+    sessionStorage.removeItem('adminToken');
+    sessionStorage.removeItem('adminAuth');
     setUser(null);
     setIsLoggedIn(false);
   };
