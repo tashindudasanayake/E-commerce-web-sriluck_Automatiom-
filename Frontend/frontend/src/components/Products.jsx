@@ -1,19 +1,23 @@
 // src/components/Products.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 
-const Products = ({ showFeaturedOnly = false, limit = null, filters = {} }) => {
+const Products = ({ showFeaturedOnly = false, limit = null, filters }) => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Memoize filters to prevent unnecessary re-renders
+  const memoizedFilters = useMemo(() => filters || {}, [filters]);
+
   useEffect(() => {
     fetchProducts();
   }, [showFeaturedOnly]);
 
+  // Apply filters when products or filters change
   useEffect(() => {
     applyFilters();
-  }, [products, filters]);
+  }, [applyFilters]);
 
   const fetchProducts = async () => {
     try {
@@ -39,22 +43,22 @@ const Products = ({ showFeaturedOnly = false, limit = null, filters = {} }) => {
     }
   };
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let filtered = [...products];
 
     // Apply category filter
-    if (filters.category) {
+    if (memoizedFilters.category) {
       filtered = filtered.filter(product => 
-        product.category.toLowerCase().includes(filters.category.toLowerCase())
+        product.category.toLowerCase().includes(memoizedFilters.category.toLowerCase())
       );
     }
 
     // Apply price range filter
-    if (filters.priceRange) {
-      if (filters.priceRange === '2000+') {
+    if (memoizedFilters.priceRange) {
+      if (memoizedFilters.priceRange === '2000+') {
         filtered = filtered.filter(product => product.price >= 2000);
       } else {
-        const [min, max] = filters.priceRange.split('-').map(Number);
+        const [min, max] = memoizedFilters.priceRange.split('-').map(Number);
         filtered = filtered.filter(product => 
           product.price >= min && product.price <= max
         );
@@ -62,23 +66,23 @@ const Products = ({ showFeaturedOnly = false, limit = null, filters = {} }) => {
     }
 
     // Apply stock filter
-    if (filters.inStock !== '') {
-      const stockStatus = filters.inStock === 'true';
+    if (memoizedFilters.inStock !== '') {
+      const stockStatus = memoizedFilters.inStock === 'true';
       filtered = filtered.filter(product => product.inStock === stockStatus);
     }
 
     // Apply search filter
-    if (filters.search) {
+    if (memoizedFilters.search) {
       filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-        product.description.toLowerCase().includes(filters.search.toLowerCase()) ||
-        product.category.toLowerCase().includes(filters.search.toLowerCase())
+        product.name.toLowerCase().includes(memoizedFilters.search.toLowerCase()) ||
+        product.description.toLowerCase().includes(memoizedFilters.search.toLowerCase()) ||
+        product.category.toLowerCase().includes(memoizedFilters.search.toLowerCase())
       );
     }
 
     // Apply sorting
-    if (filters.sortBy) {
-      switch (filters.sortBy) {
+    if (memoizedFilters.sortBy) {
+      switch (memoizedFilters.sortBy) {
         case 'price-low':
           filtered.sort((a, b) => a.price - b.price);
           break;
@@ -99,7 +103,7 @@ const Products = ({ showFeaturedOnly = false, limit = null, filters = {} }) => {
     }
 
     setFilteredProducts(filtered);
-  };
+  }, [products, memoizedFilters]);
 
   if (loading) {
     return (
@@ -124,7 +128,7 @@ const Products = ({ showFeaturedOnly = false, limit = null, filters = {} }) => {
   }
 
   // Use filtered products for display, fallback to original products if no filters
-  const displayProducts = Object.keys(filters).length > 0 && Object.values(filters).some(filter => filter !== '') 
+  const displayProducts = Object.keys(memoizedFilters).length > 0 && Object.values(memoizedFilters).some(filter => filter !== '') 
     ? filteredProducts 
     : products;
 
@@ -168,11 +172,11 @@ const Products = ({ showFeaturedOnly = false, limit = null, filters = {} }) => {
         <div key={product._id} className="product-card bg-white rounded-lg shadow-md overflow-hidden">
           <div className="relative overflow-hidden">
             <img 
-              src={product.image} 
+              src={product.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5Qcm9kdWN0IEltYWdlPC90ZXh0Pjwvc3ZnPg=='} 
               alt={product.name}
               className="product-image w-full h-48 object-cover"
               onError={(e) => {
-                e.target.src = 'https://via.placeholder.com/300x200?text=Product+Image';
+                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5Qcm9kdWN0IEltYWdlPC90ZXh0Pjwvc3ZnPg==';
               }}
             />
             {product.featured && (

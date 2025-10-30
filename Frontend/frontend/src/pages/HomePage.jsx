@@ -23,7 +23,7 @@ const HomePage = () => {
               Discover our most popular electronics and latest arrivals
             </p>
           </div>
-          <Products showFeaturedOnly={true} limit={8} />
+          <Products showFeaturedOnly={true} limit={8} filters={null} />
         </div>
       </section>
 
@@ -36,7 +36,7 @@ const HomePage = () => {
               Browse our complete collection of electronic products
             </p>
           </div>
-          <Products showFeaturedOnly={false} limit={12} />
+          <Products showFeaturedOnly={false} limit={12} filters={null} />
           
           {/* View All Products Button */}
           <div className="text-center mt-12">
