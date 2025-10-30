@@ -10,15 +10,6 @@ const Products = ({ showFeaturedOnly = false, limit = null, filters }) => {
   // Memoize filters to prevent unnecessary re-renders
   const memoizedFilters = useMemo(() => filters || {}, [filters]);
 
-  useEffect(() => {
-    fetchProducts();
-  }, [showFeaturedOnly]);
-
-  // Apply filters when products or filters change
-  useEffect(() => {
-    applyFilters();
-  }, [applyFilters]);
-
   const fetchProducts = async () => {
     try {
       setLoading(true);
@@ -104,6 +95,15 @@ const Products = ({ showFeaturedOnly = false, limit = null, filters }) => {
 
     setFilteredProducts(filtered);
   }, [products, memoizedFilters]);
+
+  // useEffect hooks after function definitions
+  useEffect(() => {
+    fetchProducts();
+  }, [showFeaturedOnly]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [applyFilters]);
 
   if (loading) {
     return (
