@@ -118,16 +118,7 @@ const Navbar = () => {
               <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">3</span>
             </button>
 
-            {/* Admin Panel Link */}
-            <a 
-              href="/admin/login"
-              className="hidden lg:block px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 no-underline"
-              onClick={(e) => {
-                console.log('Admin link clicked!');
-              }}
-            >
-              🔐 Admin
-            </a>
+
             
             {/* User Authentication Section */}
             <div className="relative" ref={dropdownRef}>
@@ -175,20 +166,20 @@ const Navbar = () => {
               ) : (
                 /* Login/Register Buttons */
                 <div className="flex items-center space-x-2">
-                  <Link 
-                    to="/login"
-                    className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-white border border-blue-500 rounded-lg hover:bg-blue-500 transition-colors"
+                  <button 
+                    onClick={() => navigate('/login')}
+                    className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-white border border-blue-500 rounded-lg hover:bg-blue-500 transition-colors cursor-pointer"
                   >
                     <ArrowRightOnRectangleIcon className="h-4 w-4" />
                     <span>Login</span>
-                  </Link>
-                  <Link 
-                    to="/register"
-                    className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                  </button>
+                  <button 
+                    onClick={() => navigate('/register')}
+                    className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
                   >
                     <UserPlusIcon className="h-4 w-4" />
                     <span>Sign Up</span>
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>
@@ -240,17 +231,7 @@ const Navbar = () => {
               Contact
             </button>
             
-            {/* Admin Link - Mobile */}
-            <a
-              href="/admin/login"
-              className="block px-4 py-3 text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all duration-200 shadow-md text-center w-full no-underline"
-              onClick={() => {
-                console.log('Mobile admin link clicked!');
-                setIsMobileMenuOpen(false);
-              }}
-            >
-              🔐 Admin Portal
-            </a>
+
             
             {/* Mobile User Authentication */}
             <div className="border-t border-gray-700 pt-4 mt-4 w-full flex flex-col items-center space-y-2">
@@ -278,22 +259,26 @@ const Navbar = () => {
                 </div>
               ) : (
                 <div className="flex flex-col space-y-2 w-full max-w-xs">
-                  <Link 
-                    to="/login"
-                    className="flex items-center justify-center space-x-2 w-full px-4 py-2 text-sm font-medium text-white border border-blue-500 rounded-lg hover:bg-blue-500 transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                  <button 
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      navigate('/login');
+                    }}
+                    className="flex items-center justify-center space-x-2 w-full px-4 py-2 text-sm font-medium text-white border border-blue-500 rounded-lg hover:bg-blue-500 transition-colors cursor-pointer"
                   >
                     <ArrowRightOnRectangleIcon className="h-4 w-4" />
                     <span>Login</span>
-                  </Link>
-                  <Link 
-                    to="/register"
-                    className="flex items-center justify-center space-x-2 w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      navigate('/register');
+                    }}
+                    className="flex items-center justify-center space-x-2 w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
                   >
                     <UserPlusIcon className="h-4 w-4" />
                     <span>Sign Up</span>
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>
