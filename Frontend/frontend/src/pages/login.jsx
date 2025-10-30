@@ -30,7 +30,8 @@ export default function Login() {
       setMessage(result.message);
       // Small delay to show success message before redirecting
       setTimeout(() => {
-        navigate('/');
+        // Redirect based on user type
+        navigate(result.redirectTo || '/');
       }, 1000);
     } else {
       setMessage(result.message);
@@ -55,6 +56,12 @@ export default function Login() {
         </div>
         
         <h2 className="text-3xl font-bold mb-6 text-center">Login</h2>
+        
+        {/* Admin Info */}
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm">
+          <p className="text-blue-800 font-medium mb-1">🔐 Admin Access</p>
+          <p className="text-blue-600">Use admin credentials to access the admin dashboard</p>
+        </div>
         
         {/* Message Display */}
         {message && (
