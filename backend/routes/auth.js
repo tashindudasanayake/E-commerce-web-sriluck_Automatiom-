@@ -18,15 +18,30 @@ const ADMIN_CREDENTIALS = {
 // Admin Login (Hardcoded credentials)
 router.post("/admin/login", async (req, res) => {
   try {
+    console.log('🔐 ADMIN LOGIN ATTEMPT RECEIVED');
+    console.log('📦 Request body:', req.body);
+    
     const { email, password } = req.body;
+    
+    console.log('📧 Received email:', `"${email}"`);
+    console.log('🔑 Received password:', `"${password}"`);
+    console.log('📏 Email length:', email?.length);
+    console.log('📏 Password length:', password?.length);
+    
+    console.log('🎯 Expected email:', `"${ADMIN_CREDENTIALS.email}"`);
+    console.log('🎯 Expected password:', `"${ADMIN_CREDENTIALS.password}"`);
+    console.log('✅ Email match:', email === ADMIN_CREDENTIALS.email);
+    console.log('✅ Password match:', password === ADMIN_CREDENTIALS.password);
 
     // Validate input
     if (!email || !password) {
+      console.log('❌ Missing email or password');
       return res.status(400).json({ message: "Email and password are required" });
     }
 
     // Check if credentials match hardcoded admin
     if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
+      console.log('✅ ADMIN LOGIN SUCCESSFUL!');
       // Generate JWT token
       const token = jwt.sign(
         { 
@@ -49,6 +64,7 @@ router.post("/admin/login", async (req, res) => {
         }
       });
     } else {
+      console.log('❌ ADMIN LOGIN FAILED - Invalid credentials');
       res.status(401).json({ message: "Invalid admin credentials" });
     }
   } catch (error) {
