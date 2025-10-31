@@ -60,42 +60,81 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      console.log('🚀 Starting admin login process...');
-      console.log('adminLogin function exists:', typeof adminLogin);
+      console.log('🚀 ADMIN LOGIN ATTEMPT');
+      console.log('� Email entered:', `"${formData.email}"`);
+      console.log('🔑 Password entered:', `"${formData.password}"`);
+      console.log('� Email length:', formData.email.length);
+      console.log('� Password length:', formData.password.length);
       
-      // Direct API call to test (temporary debugging)
-      console.log('📡 Making direct API call to admin endpoint...');
-      const directResponse = await fetch('http://localhost:5000/api/auth/admin/login', {
+      // Clean the input data
+      const cleanEmail = formData.email.trim();
+      const cleanPassword = formData.password.trim();
+      
+      console.log('🧹 Cleaned email:', `"${cleanEmail}"`);
+      console.log('🧹 Cleaned password:', `"${cleanPassword}"`);
+      
+      // Prepare request
+      const requestBody = {
+        email: cleanEmail,
+        password: cleanPassword
+      };
+      
+      const apiUrl = 'http://localhost:5000/api/auth/admin/login';
+      console.log('🌐 API URL:', apiUrl);
+      console.log('📦 Request payload:', JSON.stringify(requestBody, null, 2));
+      
+      // Make the API call
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
+        body: JSON.stringify(requestBody),
       });
       
-      console.log('📡 Direct API response status:', directResponse.status);
-      const directData = await directResponse.json();
-      console.log('📦 Direct API response data:', directData);
+      console.log('📡 Response status:', response.status);
+      console.log('📡 Response status text:', response.statusText);
+      console.log('📡 Response ok:', response.ok);
       
-      if (directResponse.ok) {
-        // Store admin credentials directly
-        localStorage.setItem('adminToken', directData.token);
-        localStorage.setItem('adminAuth', JSON.stringify(directData.user));
-        sessionStorage.setItem('adminToken', directData.token);
-        sessionStorage.setItem('adminAuth', JSON.stringify(directData.user));
+      // Parse response
+      let responseData;
+      try {
+        responseData = await response.json();
+        console.log('📦 Response data:', responseData);
+      } catch (parseError) {
+        console.error('💥 JSON parse error:', parseError);
+        throw new Error('Invalid response from server');
+      }
+      
+      if (response.ok && responseData) {
+        console.log('✅ LOGIN SUCCESS!');
         
-        console.log('✅ Admin login successful, redirecting to dashboard...');
+        // Store authentication data
+        if (responseData.token) {
+          localStorage.setItem('adminToken', responseData.token);
+          sessionStorage.setItem('adminToken', responseData.token);
+          console.log('💾 Token stored');
+        }
+        
+        if (responseData.user) {
+          localStorage.setItem('adminAuth', JSON.stringify(responseData.user));
+          sessionStorage.setItem('adminAuth', JSON.stringify(responseData.user));
+          console.log('👤 User data stored');
+        }
+        
+        // Redirect to dashboard
+        console.log('🚀 Redirecting to dashboard...');
         navigate('/admin/dashboard');
+        
       } else {
-        setError(directData.message || 'Invalid credentials. Please check your email and password.');
+        console.log('❌ LOGIN FAILED');
+        console.log('❌ Error message:', responseData?.message || 'Unknown error');
+        setError(responseData?.message || 'Login failed. Please check your credentials.');
       }
       
     } catch (error) {
-      console.error('Login error:', error);
-      setError('Connection error. Please check if the backend server is running.');
+      console.error('💥 NETWORK/CONNECTION ERROR:', error);
+      setError(`Connection error: ${error.message}. Please check if the backend server is running.`);
     } finally {
       setIsLoading(false);
     }
