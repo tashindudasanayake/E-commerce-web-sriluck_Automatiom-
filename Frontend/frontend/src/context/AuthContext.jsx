@@ -66,38 +66,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Regular user login
   const login = async (email, password) => {
+    console.log('👤 Regular login function called (this should NOT be called for admin)');
     try {
-      // First, try admin login
-      const adminResponse = await fetch('http://localhost:5000/api/auth/admin/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-      });
-
-      if (adminResponse.ok) {
-        const adminData = await adminResponse.json();
-        
-        // Store admin credentials with special keys
-        localStorage.setItem('adminToken', adminData.token);
-        localStorage.setItem('adminAuth', JSON.stringify(adminData.user));
-        sessionStorage.setItem('adminToken', adminData.token);
-        sessionStorage.setItem('adminAuth', JSON.stringify(adminData.user));
-        
-        setUser(adminData.user);
-        setIsLoggedIn(true);
-        
-        return { 
-          success: true, 
-          message: 'Admin login successful!', 
-          isAdmin: true,
-          redirectTo: '/admin/dashboard'
-        };
-      }
-
-      // If admin login fails, try regular user login
       const userResponse = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: {
@@ -127,6 +99,48 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Login error:', error);
+      return { success: false, message: 'Network error. Please try again.' };
+    }
+  };
+
+  // Admin login (separate function)
+  const adminLogin = async (email, password) => {
+    console.log('🔑 AdminLogin function called with:', { email, password: '***' });
+    try {
+      console.log('🌐 Making request to admin login endpoint...');
+      const adminResponse = await fetch('http://localhost:5000/api/auth/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      console.log('📡 Admin login response status:', adminResponse.status);
+      const adminData = await adminResponse.json();
+      console.log('📦 Admin login response data:', adminData);
+
+      if (adminResponse.ok) {
+        // Store admin credentials with special keys
+        localStorage.setItem('adminToken', adminData.token);
+        localStorage.setItem('adminAuth', JSON.stringify(adminData.user));
+        sessionStorage.setItem('adminToken', adminData.token);
+        sessionStorage.setItem('adminAuth', JSON.stringify(adminData.user));
+        
+        setUser(adminData.user);
+        setIsLoggedIn(true);
+        
+        return { 
+          success: true, 
+          message: 'Admin login successful!', 
+          isAdmin: true,
+          redirectTo: '/admin/dashboard'
+        };
+      } else {
+        return { success: false, message: adminData.message || 'Invalid admin credentials' };
+      }
+    } catch (error) {
+      console.error('Admin login error:', error);
       return { success: false, message: 'Network error. Please try again.' };
     }
   };
@@ -176,6 +190,7 @@ export const AuthProvider = ({ children }) => {
     isLoggedIn,
     loading,
     login,
+    adminLogin,
     register,
     logout,
     updateUser,
