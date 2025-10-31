@@ -1,6 +1,7 @@
 // src/pages/admin/AdminLogin.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { 
   LockClosedIcon, 
   UserIcon, 
@@ -20,6 +21,10 @@ const AdminLogin = () => {
   const [error, setError] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
+  const { adminLogin } = useAuth();
+  
+  // Debug: Check if adminLogin function is available
+  console.log('AdminLogin component - adminLogin function:', adminLogin);
 
   const handleChange = (e) => {
     setFormData({
@@ -55,8 +60,12 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      // Call backend API for admin login
-      const response = await fetch('http://localhost:5000/api/auth/admin/login', {
+      console.log('🚀 Starting admin login process...');
+      console.log('adminLogin function exists:', typeof adminLogin);
+      
+      // Direct API call to test (temporary debugging)
+      console.log('📡 Making direct API call to admin endpoint...');
+      const directResponse = await fetch('http://localhost:5000/api/auth/admin/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -66,30 +75,24 @@ const AdminLogin = () => {
           password: formData.password,
         }),
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Store auth info
-        const authData = {
-          token: data.token,
-          user: data.user,
-          timestamp: new Date().toISOString()
-        };
+      
+      console.log('📡 Direct API response status:', directResponse.status);
+      const directData = await directResponse.json();
+      console.log('📦 Direct API response data:', directData);
+      
+      if (directResponse.ok) {
+        // Store admin credentials directly
+        localStorage.setItem('adminToken', directData.token);
+        localStorage.setItem('adminAuth', JSON.stringify(directData.user));
+        sessionStorage.setItem('adminToken', directData.token);
+        sessionStorage.setItem('adminAuth', JSON.stringify(directData.user));
         
-        if (rememberMe) {
-          localStorage.setItem('adminAuth', JSON.stringify(authData));
-          localStorage.setItem('adminToken', data.token);
-        } else {
-          sessionStorage.setItem('adminAuth', JSON.stringify(authData));
-          sessionStorage.setItem('adminToken', data.token);
-        }
-        
-        // Success - redirect to dashboard
+        console.log('✅ Admin login successful, redirecting to dashboard...');
         navigate('/admin/dashboard');
       } else {
-        setError(data.message || 'Invalid credentials. Please check your email and password.');
+        setError(directData.message || 'Invalid credentials. Please check your email and password.');
       }
+      
     } catch (error) {
       console.error('Login error:', error);
       setError('Connection error. Please check if the backend server is running.');
@@ -114,13 +117,16 @@ const AdminLogin = () => {
           </div>
 
           {/* Admin Credentials Notice */}
-          <div className="mb-6 p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="mb-6 p-3 bg-green-50 rounded-lg border border-green-200">
             <div className="flex items-start space-x-2">
-              <ExclamationCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <ExclamationCircleIcon className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium text-blue-900 mb-1">Admin Access</p>
-                <p className="text-xs text-blue-700">
-                  Contact system administrator for login credentials
+                <p className="text-sm font-medium text-green-900 mb-1">Demo Admin Credentials</p>
+                <p className="text-xs text-green-700 mb-1">
+                  <strong>Email:</strong> admin@clickstore.lk
+                </p>
+                <p className="text-xs text-green-700">
+                  <strong>Password:</strong> Admin@123
                 </p>
               </div>
             </div>
