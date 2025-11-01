@@ -23,6 +23,10 @@ import Products from './pages/admin/Products';
 import Users from './pages/admin/Users';
 import Orders from './pages/admin/Orders';
 
+// Import simple admin components
+import SimpleAdminLogin from './pages/admin/SimpleAdminLogin';
+import SimpleAdminDashboard from './pages/admin/SimpleAdminDashboard';
+
 
 function App() {
   return (
@@ -43,11 +47,13 @@ function AppContent() {
     <Router>
       <div className="flex flex-col min-h-screen bg-gray-50">
         <Routes>
-          {/* Admin authentication routes (no layout) */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+          {/* Simple Admin Routes */}
+          <Route path="/admin/login" element={<SimpleAdminLogin />} />
+          <Route path="/admin/dashboard" element={<SimpleAdminDashboard />} />
           
-          {/* Admin routes with admin layout and protection */}
-          <Route path="/admin/dashboard" element={
+          {/* Original Complex Admin Routes (backup) */}
+          <Route path="/admin/login-complex" element={<AdminLogin />} />
+          <Route path="/admin/dashboard-complex" element={
             <ProtectedRoute>
               <AdminLayout>
                 <Dashboard />
