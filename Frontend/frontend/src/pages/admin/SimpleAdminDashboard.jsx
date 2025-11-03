@@ -5,7 +5,10 @@ const SimpleAdminDashboard = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
+  console.log('🏪 SimpleAdminDashboard component loaded');
+
   useEffect(() => {
+    console.log('🔄 Dashboard useEffect running...');
     // Check if admin is logged in
     const token = localStorage.getItem('adminToken');
     const adminUser = localStorage.getItem('adminUser');

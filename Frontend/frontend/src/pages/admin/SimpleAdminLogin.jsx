@@ -41,8 +41,17 @@ const SimpleAdminLogin = () => {
         localStorage.setItem('adminToken', data.token);
         localStorage.setItem('adminUser', JSON.stringify(data.user));
         
-        console.log('🚀 Navigating to dashboard...');
-        navigate('/admin/dashboard');
+        console.log('� Token stored:', localStorage.getItem('adminToken'));
+        console.log('👤 User stored:', localStorage.getItem('adminUser'));
+        
+        console.log('�🚀 Navigating to dashboard...');
+        
+        // Add a small delay to ensure storage is complete
+        setTimeout(() => {
+          console.log('🔄 Starting navigation to /admin/dashboard');
+          navigate('/admin/dashboard', { replace: true });
+          console.log('✅ Navigate function called');
+        }, 100);
       } else {
         console.log('❌ LOGIN FAILED:', data.message);
         setError(data.message || 'Invalid credentials');
