@@ -26,6 +26,7 @@ import Orders from './pages/admin/Orders';
 // Import simple admin components
 import SimpleAdminLogin from './pages/admin/SimpleAdminLogin';
 import SimpleAdminDashboard from './pages/admin/SimpleAdminDashboard';
+import TestDashboard from './pages/admin/TestDashboard';
 
 
 function App() {
@@ -49,7 +50,8 @@ function AppContent() {
         <Routes>
           {/* Simple Admin Routes */}
           <Route path="/admin/login" element={<SimpleAdminLogin />} />
-          <Route path="/admin/dashboard" element={<SimpleAdminDashboard />} />
+          <Route path="/admin/dashboard" element={<TestDashboard />} />
+          <Route path="/admin/dashboard-full" element={<SimpleAdminDashboard />} />
           
           {/* Original Complex Admin Routes (backup) */}
           <Route path="/admin/login-complex" element={<AdminLogin />} />
