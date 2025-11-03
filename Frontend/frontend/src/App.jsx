@@ -14,19 +14,9 @@ import ProductsPage from './pages/ProductsPage';
 import Login from './pages/login';
 import Register from './pages/registration';
 
-// Import admin components
-import AdminLayout from './components/admin/AdminLayout';
-import ProtectedRoute from './components/admin/ProtectedRoute';
-import AdminLogin from './pages/admin/AdminLogin';
-import Dashboard from './pages/admin/Dashboard';
-import Products from './pages/admin/Products';
-import Users from './pages/admin/Users';
-import Orders from './pages/admin/Orders';
-
-// Import simple admin components
+// Import admin components (simple version)
 import SimpleAdminLogin from './pages/admin/SimpleAdminLogin';
 import SimpleAdminDashboard from './pages/admin/SimpleAdminDashboard';
-import TestDashboard from './pages/admin/TestDashboard';
 
 
 function App() {
@@ -48,44 +38,9 @@ function AppContent() {
     <Router>
       <div className="flex flex-col min-h-screen bg-gray-50">
         <Routes>
-          {/* Simple Admin Routes */}
+          {/* Admin Routes */}
           <Route path="/admin/login" element={<SimpleAdminLogin />} />
-          <Route path="/admin/dashboard" element={<TestDashboard />} />
-          <Route path="/admin/dashboard-full" element={<SimpleAdminDashboard />} />
-          
-          {/* Original Complex Admin Routes (backup) */}
-          <Route path="/admin/login-complex" element={<AdminLogin />} />
-          <Route path="/admin/dashboard-complex" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <Dashboard />
-              </AdminLayout>
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/admin/products" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <Products />
-              </AdminLayout>
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/admin/users" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <Users />
-              </AdminLayout>
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/admin/orders" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <Orders />
-              </AdminLayout>
-            </ProtectedRoute>
-          } />
+          <Route path="/admin/dashboard" element={<SimpleAdminDashboard />} />
           
           {/* Public routes with navbar and footer */}
           <Route path="/" element={
