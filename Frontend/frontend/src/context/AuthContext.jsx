@@ -68,7 +68,6 @@ export const AuthProvider = ({ children }) => {
 
   // Regular user login
   const login = async (email, password) => {
-    console.log('👤 Regular login function called (this should NOT be called for admin)');
     try {
       const userResponse = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',

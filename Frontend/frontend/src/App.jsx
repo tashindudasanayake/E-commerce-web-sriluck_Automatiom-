@@ -17,13 +17,16 @@ import Register from './pages/registration';
 // Import admin components (simple version)
 import SimpleAdminLogin from './pages/admin/SimpleAdminLogin';
 import SimpleAdminDashboard from './pages/admin/SimpleAdminDashboard';
+import TestPage from './pages/admin/TestPage';
 
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <Router>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </Router>
   );
 }
 
@@ -35,14 +38,14 @@ function AppContent() {
   }
 
   return (
-    <Router>
-      <div className="flex flex-col min-h-screen bg-gray-50">
-        <Routes>
-          {/* Admin Routes */}
-          <Route path="/admin/login" element={<SimpleAdminLogin />} />
-          <Route path="/admin/dashboard" element={<SimpleAdminDashboard />} />
-          
-          {/* Public routes with navbar and footer */}
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <Routes>
+        {/* Admin Routes */}
+        <Route path="/admin/login" element={<SimpleAdminLogin />} />
+        <Route path="/admin/dashboard" element={<TestPage />} />
+        <Route path="/admin/dashboard-real" element={<SimpleAdminDashboard />} />
+        
+        {/* Public routes with navbar and footer */}
           <Route path="/" element={
             <>
               <Navbar />
@@ -81,7 +84,6 @@ function AppContent() {
           } />
         </Routes>
       </div>
-    </Router>
   );
 }
 

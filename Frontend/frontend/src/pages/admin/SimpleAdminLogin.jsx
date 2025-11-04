@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const SimpleAdminLogin = () => {
@@ -7,6 +7,17 @@ const SimpleAdminLogin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  // Check if already logged in
+  useEffect(() => {
+    const token = localStorage.getItem('adminToken');
+    const adminUser = localStorage.getItem('adminUser');
+    
+    if (token && adminUser) {
+      console.log('👤 Already logged in, redirecting to dashboard...');
+      navigate('/admin/dashboard', { replace: true });
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,17 +52,29 @@ const SimpleAdminLogin = () => {
         localStorage.setItem('adminToken', data.token);
         localStorage.setItem('adminUser', JSON.stringify(data.user));
         
-        console.log('� Token stored:', localStorage.getItem('adminToken'));
+        console.log('💾 Token stored:', localStorage.getItem('adminToken'));
         console.log('👤 User stored:', localStorage.getItem('adminUser'));
         
-        console.log('�🚀 Navigating to dashboard...');
+        console.log(' Navigating to dashboard...');
         
-        // Add a small delay to ensure storage is complete
-        setTimeout(() => {
-          console.log('🔄 Starting navigation to /admin/dashboard');
+        // Try navigation with multiple methods
+        try {
+          // Method 1: React Router navigate
           navigate('/admin/dashboard', { replace: true });
           console.log('✅ Navigate function called');
-        }, 100);
+          
+          // Method 2: Fallback to window.location if navigate doesn't work
+          setTimeout(() => {
+            if (window.location.pathname === '/admin/login') {
+              console.log('⚠️ Still on login page, using window.location...');
+              window.location.href = '/admin/dashboard';
+            }
+          }, 500);
+        } catch (navError) {
+          console.error('❌ Navigation error:', navError);
+          // Force navigation using window.location
+          window.location.href = '/admin/dashboard';
+        }
       } else {
         console.log('❌ LOGIN FAILED:', data.message);
         setError(data.message || 'Invalid credentials');
