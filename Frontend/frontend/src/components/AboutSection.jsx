@@ -30,7 +30,7 @@ const AboutSection = () => {
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               Why Choose 
             </span>{' '}
-            <span className="text-white animate-float">ElectroShop?</span>
+            <span className="text-white animate-float">ClickStore.LK?</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed animate-slide-in" style={{animationDelay: '0.3s'}}>
             Since 2020, we've been dedicated to bringing you the latest technology with unmatched quality and service.

@@ -20,7 +20,7 @@ const ContactSection = () => {
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Phone</h3>
-            <p className="text-blue-600 font-medium">+1 (555) 123-4567</p>
+            <p className="text-blue-600 font-medium">+94 78 538 4558</p>
           </div>
 
           {/* Email */}
@@ -31,7 +31,7 @@ const ContactSection = () => {
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Email</h3>
-            <p className="text-green-600 font-medium">support@electroshop.com</p>
+            <p className="text-green-600 font-medium">support@clickstore.com</p>
           </div>
 
           {/* Address */}
@@ -43,7 +43,7 @@ const ContactSection = () => {
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Address</h3>
-            <p className="text-purple-600 font-medium">123 Tech Street<br />Silicon Valley, CA</p>
+            <p className="text-purple-600 font-medium">85,Diyagama, Homagama, <br />Sri Lanka.</p>
           </div>
 
         </div>
