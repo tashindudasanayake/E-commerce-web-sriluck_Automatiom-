@@ -35,6 +35,9 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
+            <Link to="/admin/login" className="hover:text-blue-400 transition">
+              Admin
+            </Link>
             <Link to="/cart" className="relative hover:text-blue-400 transition">
               <ShoppingCartIcon className="h-6 w-6" />
               <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
@@ -67,6 +70,9 @@ const Navbar = () => {
               <button onClick={() => scrollToSection('contact')} className="hover:text-blue-400 transition py-2 text-left">
                 Contact
               </button>
+              <Link to="/admin/login" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-blue-400 transition py-2">
+                Admin
+              </Link>
               <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-blue-400 transition py-2 flex items-center">
                 <ShoppingCartIcon className="h-5 w-5 mr-2" />
                 Cart (0)
