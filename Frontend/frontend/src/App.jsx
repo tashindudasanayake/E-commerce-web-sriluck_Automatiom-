@@ -6,7 +6,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
-import ProductsPage from './pages/ProductsPage';
 
 
 function App() {
@@ -19,15 +18,6 @@ function App() {
             <Navbar />
             <main className="flex-grow">
               <HomePage />
-            </main>
-            <Footer />
-          </>
-        } />
-        <Route path="/products" element={
-          <>
-            <Navbar />
-            <main className="flex-grow">
-              <ProductsPage />
             </main>
             <Footer />
           </>
