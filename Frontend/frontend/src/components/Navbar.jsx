@@ -26,6 +26,9 @@ const Navbar = () => {
             <NavLink to="/" className="hover:text-blue-400 transition">
               Home
             </NavLink>
+            <button onClick={() => scrollToSection('products')} className="hover:text-blue-400 transition">
+              Products
+            </button>
             <button onClick={() => scrollToSection('about')} className="hover:text-blue-400 transition">
               About Us
             </button>
@@ -64,6 +67,9 @@ const Navbar = () => {
               <NavLink to="/" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-blue-400 transition py-2">
                 Home
               </NavLink>
+              <button onClick={() => scrollToSection('products')} className="hover:text-blue-400 transition py-2 text-left">
+                Products
+              </button>
               <button onClick={() => scrollToSection('about')} className="hover:text-blue-400 transition py-2 text-left">
                 About Us
               </button>
