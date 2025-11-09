@@ -22,7 +22,7 @@ const HomePage = () => {
               Discover our handpicked selection of premium electronics
             </p>
           </div>
-          <Products showFeaturedOnly={true} limit={8} />
+          <Products showFeaturedOnly={true} limit={8} showFilters={false} />
         </div>
       </section>
 
@@ -35,7 +35,7 @@ const HomePage = () => {
               Browse our complete collection of quality electronics
             </p>
           </div>
-          <Products showFeaturedOnly={false} limit={null} />
+          <Products showFeaturedOnly={false} limit={null} showFilters={true} />
         </div>
       </section>
       
