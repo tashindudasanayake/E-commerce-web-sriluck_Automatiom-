@@ -11,6 +11,7 @@ const Products = ({ showFeaturedOnly = false, limit = null, showFilters = true }
   const [showFeatured, setShowFeatured] = useState(false);
   const [sortBy, setSortBy] = useState('newest');
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const [showAllFeatured, setShowAllFeatured] = useState(false);
 
   const categories = ['All', 'Laptops', 'Phones', 'Tablets', 'Accessories', 'Audio', 'Cameras', 'Gaming', 'Other'];
 
@@ -100,6 +101,13 @@ const Products = ({ showFeaturedOnly = false, limit = null, showFilters = true }
     setShowFeatured(false);
     setSortBy('newest');
   };
+
+  // Determine which products to display
+  const displayedProducts = showFeaturedOnly && limit && !showAllFeatured 
+    ? filteredProducts.slice(0, limit) 
+    : filteredProducts;
+
+  const hasMoreFeatured = showFeaturedOnly && filteredProducts.length > limit;
 
   if (loading) {
     return (
@@ -455,7 +463,7 @@ const Products = ({ showFeaturedOnly = false, limit = null, showFilters = true }
 
           {/* Products Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        {filteredProducts.map((product) => (
+        {displayedProducts.map((product) => (
           <div
             key={product._id}
             className="bg-white rounded-xl shadow-md hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 overflow-hidden group"
@@ -542,6 +550,32 @@ const Products = ({ showFeaturedOnly = false, limit = null, showFilters = true }
           </div>
         ))}
       </div>
+
+          {/* View More/Less Button for Featured Products */}
+          {hasMoreFeatured && (
+            <div className="mt-12 text-center">
+              <button
+                onClick={() => setShowAllFeatured(!showAllFeatured)}
+                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold"
+              >
+                {showAllFeatured ? (
+                  <>
+                    <span>View Less</span>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                    </svg>
+                  </>
+                ) : (
+                  <>
+                    <span>View More Featured Products ({filteredProducts.length - limit}+)</span>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </>
+                )}
+              </button>
+            </div>
+          )}
 
         </div>
       </div>
