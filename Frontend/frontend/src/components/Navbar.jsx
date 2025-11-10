@@ -1,10 +1,26 @@
 // src/components/Navbar.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { ShoppingCartIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { ShoppingCartIcon, Bars3Icon, XMarkIcon, UserIcon } from '@heroicons/react/24/outline';
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+
+  // Check if user is logged in
+  useEffect(() => {
+    const checkAuth = () => {
+      const userToken = localStorage.getItem('userToken');
+      setIsUserLoggedIn(!!userToken);
+    };
+
+    checkAuth();
+    
+    // Listen for storage changes (login/logout from other tabs)
+    window.addEventListener('storage', checkAuth);
+    
+    return () => window.removeEventListener('storage', checkAuth);
+  }, []);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -38,15 +54,23 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
+            {!isUserLoggedIn && (
+              <Link to="/login" className="hover:text-blue-400 transition flex items-center gap-2">
+                <UserIcon className="h-5 w-5" />
+                Login
+              </Link>
+            )}
             <Link to="/admin/login" className="hover:text-blue-400 transition">
               Admin
             </Link>
-            <Link to="/cart" className="relative hover:text-blue-400 transition">
-              <ShoppingCartIcon className="h-6 w-6" />
-              <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                0
-              </span>
-            </Link>
+            {isUserLoggedIn && (
+              <Link to="/cart" className="relative hover:text-blue-400 transition">
+                <ShoppingCartIcon className="h-6 w-6" />
+                <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  0
+                </span>
+              </Link>
+            )}
           </div>
 
           <button
@@ -76,13 +100,21 @@ const Navbar = () => {
               <button onClick={() => scrollToSection('contact')} className="hover:text-blue-400 transition py-2 text-left">
                 Contact
               </button>
+              {!isUserLoggedIn && (
+                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-blue-400 transition py-2 flex items-center">
+                  <UserIcon className="h-5 w-5 mr-2" />
+                  Login
+                </Link>
+              )}
               <Link to="/admin/login" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-blue-400 transition py-2">
                 Admin
               </Link>
-              <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-blue-400 transition py-2 flex items-center">
-                <ShoppingCartIcon className="h-5 w-5 mr-2" />
-                Cart (0)
-              </Link>
+              {isUserLoggedIn && (
+                <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-blue-400 transition py-2 flex items-center">
+                  <ShoppingCartIcon className="h-5 w-5 mr-2" />
+                  Cart (0)
+                </Link>
+              )}
             </div>
           </div>
         )}
