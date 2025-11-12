@@ -77,9 +77,9 @@ const Navbar = () => {
               </Link>
             ) : (
               <>
-                <span className="text-sm text-gray-300">
+                <Link to="/profile" className="text-sm text-gray-300 hover:text-blue-400 transition">
                   Hi, <span className="font-semibold text-white">{userData?.name}</span>
-                </span>
+                </Link>
                 <Link to="/cart" className="relative hover:text-blue-400 transition">
                   <ShoppingCartIcon className="h-6 w-6" />
                   <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
@@ -134,9 +134,9 @@ const Navbar = () => {
                 </Link>
               ) : (
                 <>
-                  <div className="py-2 text-sm text-gray-300">
+                  <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)} className="py-2 text-sm text-gray-300 hover:text-blue-400 transition">
                     Hi, <span className="font-semibold text-white">{userData?.name}</span>
-                  </div>
+                  </Link>
                   <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-blue-400 transition py-2 flex items-center">
                     <ShoppingCartIcon className="h-5 w-5 mr-2" />
                     Cart (0)

@@ -8,6 +8,7 @@ import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import UserLogin from './pages/UserLogin';
 import UserRegister from './pages/UserRegister';
+import UserProfile from './pages/UserProfile';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 
@@ -30,6 +31,9 @@ function App() {
         {/* User Authentication routes (no navbar/footer) */}
         <Route path="/login" element={<UserLogin />} />
         <Route path="/register" element={<UserRegister />} />
+        
+        {/* User Profile route (no navbar/footer) */}
+        <Route path="/profile" element={<UserProfile />} />
 
         {/* Admin routes (no navbar/footer) */}
         <Route path="/admin/login" element={<AdminLogin />} />
