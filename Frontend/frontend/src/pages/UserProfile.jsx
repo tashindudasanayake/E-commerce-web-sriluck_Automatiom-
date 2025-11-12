@@ -8,7 +8,8 @@ import {
   ShoppingBagIcon,
   ShoppingCartIcon,
   ArrowRightOnRectangleIcon,
-  HomeIcon
+  HomeIcon,
+  CameraIcon
 } from '@heroicons/react/24/outline';
 
 const UserProfile = () => {
@@ -16,6 +17,8 @@ const UserProfile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState('');
 
   useEffect(() => {
     fetchUserProfile();
@@ -62,6 +65,75 @@ const UserProfile = () => {
     localStorage.removeItem('userData');
     window.dispatchEvent(new Event('storage'));
     navigate('/login');
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setUploadMessage('Please select an image file');
+      setTimeout(() => setUploadMessage(''), 3000);
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadMessage('Image size should be less than 5MB');
+      setTimeout(() => setUploadMessage(''), 3000);
+      return;
+    }
+
+    setUploading(true);
+    setUploadMessage('');
+
+    try {
+      // Convert image to base64
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64String = reader.result;
+
+        // Update profile with the image
+        const token = localStorage.getItem('userToken');
+        const response = await fetch('http://localhost:5000/api/users/profile', {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: user.name,
+            phone: user.phone,
+            address: user.address,
+            profilePicture: base64String
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          setUser(data.user);
+          setUploadMessage('Profile picture updated successfully!');
+          setTimeout(() => setUploadMessage(''), 3000);
+          
+          // Update localStorage
+          const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+          userData.profilePicture = base64String;
+          localStorage.setItem('userData', JSON.stringify(userData));
+        } else {
+          setUploadMessage('Failed to upload image');
+          setTimeout(() => setUploadMessage(''), 3000);
+        }
+      };
+
+      reader.readAsDataURL(file);
+    } catch (error) {
+      setUploadMessage('Error uploading image: ' + error.message);
+      setTimeout(() => setUploadMessage(''), 3000);
+    } finally {
+      setUploading(false);
+    }
   };
 
   if (loading) {
@@ -120,9 +192,52 @@ const UserProfile = () => {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-md overflow-hidden">
               <div className="bg-blue-600 p-8 text-center">
-                <div className="inline-block bg-white rounded-full p-4 mb-4">
-                  <UserIcon className="h-20 w-20 text-blue-600" />
+                <div className="relative inline-block mb-4">
+                  {/* Profile Picture */}
+                  <div className="bg-white rounded-full p-1">
+                    {user?.profilePicture ? (
+                      <img 
+                        src={user.profilePicture} 
+                        alt={user.name}
+                        className="h-32 w-32 rounded-full object-cover border-4 border-white"
+                      />
+                    ) : (
+                      <div className="h-32 w-32 rounded-full bg-gray-200 flex items-center justify-center">
+                        <UserIcon className="h-20 w-20 text-blue-600" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Upload Button */}
+                  <label 
+                    htmlFor="profile-upload" 
+                    className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg cursor-pointer hover:bg-gray-100 transition"
+                  >
+                    <CameraIcon className="h-5 w-5 text-blue-600" />
+                    <input
+                      id="profile-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      disabled={uploading}
+                    />
+                  </label>
                 </div>
+                
+                {/* Upload Status Message */}
+                {uploadMessage && (
+                  <div className={`mb-2 text-sm ${uploadMessage.includes('success') ? 'text-green-200' : 'text-red-200'}`}>
+                    {uploadMessage}
+                  </div>
+                )}
+                
+                {uploading && (
+                  <div className="mb-2 text-sm text-blue-100">
+                    Uploading...
+                  </div>
+                )}
+                
                 <h2 className="text-2xl font-bold text-white mb-1">{user?.name}</h2>
                 <p className="text-blue-100 text-sm">{user?.email}</p>
               </div>

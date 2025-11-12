@@ -77,8 +77,17 @@ const Navbar = () => {
               </Link>
             ) : (
               <>
-                <Link to="/profile" className="text-sm text-gray-300 hover:text-blue-400 transition">
-                  Hi, <span className="font-semibold text-white">{userData?.name}</span>
+                <Link to="/profile" className="flex items-center gap-2 text-sm text-gray-300 hover:text-blue-400 transition">
+                  {userData?.profilePicture ? (
+                    <img 
+                      src={userData.profilePicture} 
+                      alt={userData.name}
+                      className="h-8 w-8 rounded-full object-cover border-2 border-blue-400"
+                    />
+                  ) : (
+                    <UserIcon className="h-5 w-5" />
+                  )}
+                  <span>Hi, <span className="font-semibold text-white">{userData?.name}</span></span>
                 </Link>
                 <Link to="/cart" className="relative hover:text-blue-400 transition">
                   <ShoppingCartIcon className="h-6 w-6" />
@@ -134,8 +143,17 @@ const Navbar = () => {
                 </Link>
               ) : (
                 <>
-                  <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)} className="py-2 text-sm text-gray-300 hover:text-blue-400 transition">
-                    Hi, <span className="font-semibold text-white">{userData?.name}</span>
+                  <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)} className="py-2 flex items-center gap-2 text-sm text-gray-300 hover:text-blue-400 transition">
+                    {userData?.profilePicture ? (
+                      <img 
+                        src={userData.profilePicture} 
+                        alt={userData.name}
+                        className="h-8 w-8 rounded-full object-cover border-2 border-blue-400"
+                      />
+                    ) : (
+                      <UserIcon className="h-5 w-5" />
+                    )}
+                    <span>Hi, <span className="font-semibold text-white">{userData?.name}</span></span>
                   </Link>
                   <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-blue-400 transition py-2 flex items-center">
                     <ShoppingCartIcon className="h-5 w-5 mr-2" />

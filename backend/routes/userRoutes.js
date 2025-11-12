@@ -42,7 +42,8 @@ router.post('/register', async (req, res) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
-      address: user.address
+      address: user.address,
+      profilePicture: user.profilePicture
     };
 
     res.status(201).json({
@@ -96,7 +97,8 @@ router.post('/login', async (req, res) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
-      address: user.address
+      address: user.address,
+      profilePicture: user.profilePicture
     };
 
     res.json({
@@ -162,11 +164,16 @@ router.put('/profile', async (req, res) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const { name, phone, address } = req.body;
+    const { name, phone, address, profilePicture } = req.body;
+
+    const updateData = { name, phone, address };
+    if (profilePicture !== undefined) {
+      updateData.profilePicture = profilePicture;
+    }
 
     const user = await User.findByIdAndUpdate(
       decoded.userId,
-      { name, phone, address },
+      updateData,
       { new: true, runValidators: true }
     ).select('-password');
 
