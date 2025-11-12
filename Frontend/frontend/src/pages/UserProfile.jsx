@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { UserIcon, EnvelopeIcon, PhoneIcon, MapPinIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { useNavigate, Link } from 'react-router-dom';
+import { 
+  UserIcon, 
+  EnvelopeIcon, 
+  PhoneIcon, 
+  MapPinIcon, 
+  ShoppingBagIcon,
+  ShoppingCartIcon,
+  ArrowRightOnRectangleIcon,
+  HomeIcon
+} from '@heroicons/react/24/outline';
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -48,16 +57,19 @@ const UserProfile = () => {
     }
   };
 
-  const handleGoBack = () => {
-    navigate('/');
+  const handleLogout = () => {
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('userData');
+    window.dispatchEvent(new Event('storage'));
+    navigate('/login');
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Loading profile...</p>
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent"></div>
+          <p className="mt-4 text-gray-600 text-lg">Loading profile...</p>
         </div>
       </div>
     );
@@ -65,143 +77,177 @@ const UserProfile = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
-          <div className="text-center">
-            <div className="text-red-500 text-5xl mb-4">⚠️</div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Error</h2>
-            <p className="text-gray-600 mb-6">{error}</p>
-            <button
-              onClick={() => navigate('/login')}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-            >
-              Go to Login
-            </button>
-          </div>
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+          <div className="text-red-500 text-6xl mb-4">❌</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Error</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button
+            onClick={() => navigate('/login')}
+            className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
+          >
+            Go to Login
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <button
-            onClick={handleGoBack}
-            className="flex items-center text-blue-600 hover:text-blue-800 transition mb-4"
-          >
-            <ArrowLeftIcon className="h-5 w-5 mr-2" />
-            Back to Home
-          </button>
-          <h1 className="text-4xl font-bold text-gray-800">My Profile</h1>
-          <p className="text-gray-600 mt-2">View and manage your account information</p>
+    <div className="min-h-screen bg-gray-100">
+      {/* Top Navigation Bar */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Link to="/" className="text-2xl font-bold text-gray-800">
+              Click<span className="text-blue-600">Store.LK</span>
+            </Link>
+            <Link 
+              to="/" 
+              className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition"
+            >
+              <HomeIcon className="h-5 w-5" />
+              <span>Back to Home</span>
+            </Link>
+          </div>
         </div>
+      </div>
 
-        {/* Profile Card */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          {/* Header Section with Avatar */}
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-12 text-white">
-            <div className="flex items-center space-x-6">
-              <div className="bg-white rounded-full p-4">
-                <UserIcon className="h-16 w-16 text-blue-600" />
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Sidebar - User Card */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-xl shadow-md overflow-hidden">
+              <div className="bg-blue-600 p-8 text-center">
+                <div className="inline-block bg-white rounded-full p-4 mb-4">
+                  <UserIcon className="h-20 w-20 text-blue-600" />
+                </div>
+                <h2 className="text-2xl font-bold text-white mb-1">{user?.name}</h2>
+                <p className="text-blue-100 text-sm">{user?.email}</p>
               </div>
-              <div>
-                <h2 className="text-3xl font-bold">{user?.name}</h2>
-                <p className="text-blue-100 mt-1">Member since {new Date(user?.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
+              
+              <div className="p-6 space-y-4">
+                <button
+                  onClick={() => navigate('/orders')}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition text-left"
+                >
+                  <ShoppingBagIcon className="h-5 w-5 text-gray-600" />
+                  <span className="text-gray-700">My Orders</span>
+                </button>
+                
+                <button
+                  onClick={() => navigate('/cart')}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition text-left"
+                >
+                  <ShoppingCartIcon className="h-5 w-5 text-gray-600" />
+                  <span className="text-gray-700">Shopping Cart</span>
+                </button>
+                
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 transition text-left text-red-600"
+                >
+                  <ArrowRightOnRectangleIcon className="h-5 w-5" />
+                  <span className="font-semibold">Logout</span>
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Details Section */}
-          <div className="px-8 py-8">
-            <h3 className="text-xl font-semibold text-gray-800 mb-6">Account Details</h3>
-            
-            <div className="space-y-6">
-              {/* Name */}
-              <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                <div className="bg-blue-100 rounded-full p-3">
-                  <UserIcon className="h-6 w-6 text-blue-600" />
+          {/* Right Content - Profile Details */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Personal Information Card */}
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <h3 className="text-xl font-bold text-gray-800 mb-6 pb-3 border-b">Personal Information</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Full Name</label>
+                  <div className="flex items-center gap-3 mt-2">
+                    <UserIcon className="h-5 w-5 text-blue-600" />
+                    <p className="text-gray-800 text-lg">{user?.name}</p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-500 font-medium">Full Name</p>
-                  <p className="text-lg text-gray-800 font-semibold mt-1">{user?.name}</p>
-                </div>
-              </div>
 
-              {/* Email */}
-              <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                <div className="bg-green-100 rounded-full p-3">
-                  <EnvelopeIcon className="h-6 w-6 text-green-600" />
+                <div>
+                  <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Email Address</label>
+                  <div className="flex items-center gap-3 mt-2">
+                    <EnvelopeIcon className="h-5 w-5 text-blue-600" />
+                    <p className="text-gray-800 text-lg">{user?.email}</p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-500 font-medium">Email Address</p>
-                  <p className="text-lg text-gray-800 font-semibold mt-1">{user?.email}</p>
-                </div>
-              </div>
 
-              {/* Phone */}
-              <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                <div className="bg-purple-100 rounded-full p-3">
-                  <PhoneIcon className="h-6 w-6 text-purple-600" />
+                <div>
+                  <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Phone Number</label>
+                  <div className="flex items-center gap-3 mt-2">
+                    <PhoneIcon className="h-5 w-5 text-blue-600" />
+                    <p className="text-gray-800 text-lg">{user?.phone || 'Not provided'}</p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-500 font-medium">Phone Number</p>
-                  <p className="text-lg text-gray-800 font-semibold mt-1">{user?.phone || 'Not provided'}</p>
-                </div>
-              </div>
 
-              {/* Address */}
-              <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                <div className="bg-orange-100 rounded-full p-3">
-                  <MapPinIcon className="h-6 w-6 text-orange-600" />
+                <div>
+                  <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Member Since</label>
+                  <div className="flex items-center gap-3 mt-2">
+                    <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p className="text-gray-800 text-lg">
+                      {new Date(user?.createdAt).toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric',
+                        year: 'numeric' 
+                      })}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-500 font-medium">Address</p>
-                  <p className="text-lg text-gray-800 font-semibold mt-1">{user?.address || 'Not provided'}</p>
-                </div>
-              </div>
-            </div>
 
-            {/* Account Stats */}
-            <div className="mt-8 pt-8 border-t border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Account Statistics</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg">
-                  <p className="text-sm text-blue-600 font-medium">Total Orders</p>
-                  <p className="text-3xl font-bold text-blue-700 mt-2">{user?.orders?.length || 0}</p>
-                </div>
-                <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg">
-                  <p className="text-sm text-green-600 font-medium">Cart Items</p>
-                  <p className="text-3xl font-bold text-green-700 mt-2">{user?.cart?.length || 0}</p>
-                </div>
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg">
-                  <p className="text-sm text-purple-600 font-medium">Account Type</p>
-                  <p className="text-3xl font-bold text-purple-700 mt-2 capitalize">{user?.role || 'User'}</p>
+                <div className="md:col-span-2">
+                  <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Address</label>
+                  <div className="flex items-start gap-3 mt-2">
+                    <MapPinIcon className="h-5 w-5 text-blue-600 mt-1" />
+                    <p className="text-gray-800 text-lg">{user?.address || 'Not provided'}</p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="mt-8 flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={handleGoBack}
-                className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
-              >
-                Continue Shopping
-              </button>
-              <button
-                onClick={() => {
-                  localStorage.removeItem('userToken');
-                  localStorage.removeItem('userData');
-                  window.dispatchEvent(new Event('storage'));
-                  navigate('/login');
-                }}
-                className="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition font-semibold"
-              >
-                Logout
-              </button>
+            {/* Statistics Card */}
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <h3 className="text-xl font-bold text-gray-800 mb-6 pb-3 border-b">Account Overview</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+                  <ShoppingBagIcon className="h-10 w-10 text-blue-600 mx-auto mb-3" />
+                  <p className="text-3xl font-bold text-blue-700">{user?.orders?.length || 0}</p>
+                  <p className="text-sm text-gray-600 mt-1">Total Orders</p>
+                </div>
+
+                <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
+                  <ShoppingCartIcon className="h-10 w-10 text-green-600 mx-auto mb-3" />
+                  <p className="text-3xl font-bold text-green-700">{user?.cart?.length || 0}</p>
+                  <p className="text-sm text-gray-600 mt-1">Cart Items</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <h3 className="text-xl font-bold text-gray-800 mb-4">Quick Actions</h3>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link
+                  to="/"
+                  className="flex-1 bg-blue-600 text-white text-center px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
+                >
+                  Continue Shopping
+                </Link>
+                <Link
+                  to="/cart"
+                  className="flex-1 bg-gray-800 text-white text-center px-6 py-3 rounded-lg hover:bg-gray-900 transition font-semibold"
+                >
+                  View Cart
+                </Link>
+              </div>
             </div>
           </div>
         </div>
