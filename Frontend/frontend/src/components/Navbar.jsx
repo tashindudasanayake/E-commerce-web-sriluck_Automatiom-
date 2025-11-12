@@ -1,17 +1,23 @@
 // src/components/Navbar.jsx
 import React, { useState, useEffect } from 'react';
-import { NavLink, Link } from 'react-router-dom';
-import { ShoppingCartIcon, Bars3Icon, XMarkIcon, UserIcon } from '@heroicons/react/24/outline';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { ShoppingCartIcon, Bars3Icon, XMarkIcon, UserIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const navigate = useNavigate();
 
   // Check if user is logged in
   useEffect(() => {
     const checkAuth = () => {
       const userToken = localStorage.getItem('userToken');
+      const storedUserData = localStorage.getItem('userData');
       setIsUserLoggedIn(!!userToken);
+      if (storedUserData) {
+        setUserData(JSON.parse(storedUserData));
+      }
     };
 
     checkAuth();
@@ -21,6 +27,16 @@ const Navbar = () => {
     
     return () => window.removeEventListener('storage', checkAuth);
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('userData');
+    setIsUserLoggedIn(false);
+    setUserData(null);
+    setIsMobileMenuOpen(false);
+    window.dispatchEvent(new Event('storage'));
+    navigate('/');
+  };
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -54,23 +70,34 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            {!isUserLoggedIn && (
+            {!isUserLoggedIn ? (
               <Link to="/login" className="hover:text-blue-400 transition flex items-center gap-2">
                 <UserIcon className="h-5 w-5" />
                 Login
               </Link>
+            ) : (
+              <>
+                <span className="text-sm text-gray-300">
+                  Hi, <span className="font-semibold text-white">{userData?.name}</span>
+                </span>
+                <Link to="/cart" className="relative hover:text-blue-400 transition">
+                  <ShoppingCartIcon className="h-6 w-6" />
+                  <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    0
+                  </span>
+                </Link>
+                <button 
+                  onClick={handleLogout}
+                  className="hover:text-blue-400 transition flex items-center gap-2"
+                >
+                  <ArrowRightOnRectangleIcon className="h-5 w-5" />
+                  Logout
+                </button>
+              </>
             )}
             <Link to="/admin/login" className="hover:text-blue-400 transition">
               Admin
             </Link>
-            {isUserLoggedIn && (
-              <Link to="/cart" className="relative hover:text-blue-400 transition">
-                <ShoppingCartIcon className="h-6 w-6" />
-                <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  0
-                </span>
-              </Link>
-            )}
           </div>
 
           <button
@@ -100,21 +127,32 @@ const Navbar = () => {
               <button onClick={() => scrollToSection('contact')} className="hover:text-blue-400 transition py-2 text-left">
                 Contact
               </button>
-              {!isUserLoggedIn && (
+              {!isUserLoggedIn ? (
                 <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-blue-400 transition py-2 flex items-center">
                   <UserIcon className="h-5 w-5 mr-2" />
                   Login
                 </Link>
+              ) : (
+                <>
+                  <div className="py-2 text-sm text-gray-300">
+                    Hi, <span className="font-semibold text-white">{userData?.name}</span>
+                  </div>
+                  <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-blue-400 transition py-2 flex items-center">
+                    <ShoppingCartIcon className="h-5 w-5 mr-2" />
+                    Cart (0)
+                  </Link>
+                  <button 
+                    onClick={handleLogout}
+                    className="hover:text-blue-400 transition py-2 flex items-center text-left"
+                  >
+                    <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2" />
+                    Logout
+                  </button>
+                </>
               )}
               <Link to="/admin/login" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-blue-400 transition py-2">
                 Admin
               </Link>
-              {isUserLoggedIn && (
-                <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-blue-400 transition py-2 flex items-center">
-                  <ShoppingCartIcon className="h-5 w-5 mr-2" />
-                  Cart (0)
-                </Link>
-              )}
             </div>
           </div>
         )}
